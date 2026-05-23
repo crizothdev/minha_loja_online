@@ -11,6 +11,19 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
+const missing = Object.entries(firebaseConfig)
+  .filter(([, v]) => !v)
+  .map(([k]) => k);
+
+if (missing.length > 0) {
+  document.getElementById('root')!.innerHTML = `
+    <div style="max-width:500px;margin:80px auto;padding:24px;font-family:sans-serif;text-align:center">
+      <h2 style="color:#dc2626">Configuração do Firebase incompleta</h2>
+      <p style="color:#64748b">Variáveis de ambiente ausentes: ${missing.join(', ')}</p>
+    </div>`;
+  throw new Error(`Firebase config missing: ${missing.join(', ')}`);
+}
+
 const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
